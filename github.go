@@ -41,8 +41,10 @@ func (self *SessionManager) issueGitHubSession() http.Handler {
 		session := self.issueSession()
 		session.Values["userid"] = fmt.Sprintf("%v", *githubUser.ID)
 		session.Values["username"] = githubUser.Login
-		// session.Values["useremail"] = githubUser.Email	// <-- Not being sent...
 		session.Values["useremail"] = githubUser.Login
+		if nil != githubUser.Email {
+			session.Values["useremail"] = githubUser.Email
+		}
 		session.Values["usertype"] = "github"
 		session.Save(w)
 		http.Redirect(w, req, "/profile", http.StatusFound)
