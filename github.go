@@ -1,6 +1,7 @@
 package gosocialsessions
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/dghubble/gologin/v2"
@@ -38,9 +39,10 @@ func (self *SessionManager) issueGitHubSession() http.Handler {
 
 		// 2. Implement a success handler to issue some form of session
 		session := self.issueSession()
-		session.Values["userid"] = githubUser.ID
-		session.Values["username"] = githubUser.Name
-		session.Values["useremail"] = githubUser.Email
+		session.Values["userid"] = fmt.Sprintf("%v", *githubUser.ID)
+		session.Values["username"] = githubUser.Login
+		// session.Values["useremail"] = githubUser.Email	// <-- Not being sent...
+		session.Values["useremail"] = githubUser.Login
 		session.Values["usertype"] = "github"
 		session.Save(w)
 		http.Redirect(w, req, "/profile", http.StatusFound)
